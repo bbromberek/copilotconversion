@@ -1,46 +1,239 @@
-# User Story Writing
+# Ability: user-story-writing
 
-## Steps to Write User Stories
-1. **Identify the user**: Understand who will benefit from the feature. This could be an end-user, a customer, or an internal stakeholder.
-2. **Define the goal**: Clearly state what the user wants to achieve with the feature.
-3. **Outline the benefits**: Explain why the user wants this feature and how it helps them.
-4. **Write the story**: Use the standard format: "As a [user], I want [goal] so that [benefit]".
-5. **Discuss acceptance criteria**: Define what it means for the story to be done, including any conditions that must be met for the feature to be considered complete.
-6. **Review and refine**: Validate the story with stakeholders and make sure it's clear and understandable.
+## Purpose
 
-## Examples
-### Example 1
-- **User**: As a new user  
-- **Goal**: I want to register for an account  
-- **Benefit**: So that I can access the platform’s features.
+Create clear, concise user stories that combine Mike Cohn's user story format with Gherkin-style acceptance criteria. This ability helps translate user needs into actionable development work with clear outcomes and testable conditions.
 
-### Example 2
-- **User**: As a returning customer  
-- **Goal**: I want to save my payment information  
-- **Benefit**: So that I can check out faster on future purchases.
+A user story is a conversation starter that captures *who* benefits, *what* they're trying to do, *why* it matters, and *how* you'll know it works—not a final specification.
 
-## Anti-patterns
-- **Too vague**: "As a user, I want to use the app" (What app? What features?)
-- **Too detailed**: Writing implementation details in the user story instead of keeping it at a high level.
-- **Not user-centered**: Stories that focus on system functionalities rather than user needs.
+## Key Concepts
 
-## Templates
-### Basic Template
-- **As a** [user]  
-- **I want to** [goal]  
-- **So that** [benefit]
+### The Mike Cohn + Gherkin Format
 
-### Template with Acceptance Criteria
-- **As a** [user]  
-- **I want to** [goal]  
-- **So that** [benefit]  
+User stories combine two elements:
 
-**Acceptance Criteria**:  
-- [Criterion 1]  
-- [Criterion 2]  
-- [Criterion 3]  
+**Use Case (Mike Cohn format):**
+```
+- As a [user persona/role]
+- I want to [action to achieve outcome]
+- so that [desired outcome]
+```
 
-### Tips
-- Keep user stories concise and focused.
-- Use language that is understandable by all stakeholders.
-- Regularly review and update stories based on feedback and changing requirements.
+**Acceptance Criteria (Gherkin format):**
+```
+- Scenario: [Brief description of the scenario]
+- Given: [Initial context or preconditions]
+- and Given: [Additional preconditions]
+- When: [Event that triggers the action]
+- Then: [Expected outcome]
+```
+
+### Why This Structure Works
+- **User-centric:** Forces focus on who benefits and why
+- **Outcome-focused:** "So that" emphasizes the value delivered, not just the action
+- **Testable:** Gherkin acceptance criteria are concrete and verifiable
+- **Conversational:** Story is the opening for discussion, not the final spec
+- **Shared language:** Product, engineering, and QA all understand the format
+
+### When to Use This Ability
+- Translating user needs into development work
+- Backlog grooming and sprint planning
+- Communicating value to engineering and design
+- Ensuring testable acceptance criteria exist before development
+
+### When NOT to Use This Ability
+- For pure technical debt or refactoring (use engineering tasks instead)
+- When stories are too large (split first using story-splitting techniques)
+- Before understanding the user problem (write a problem statement first)
+
+## Common Anti-Patterns to Avoid
+
+### Pitfall 1: Technical Tasks Disguised as User Stories
+**Symptom:** "As a developer, I want to refactor the API, so that the code is cleaner"
+
+**Problem:** No user value is delivered. This is an engineering task.
+
+**Fix:** If there's no user outcome, it's not a user story—use an engineering task or tech debt ticket instead.
+
+### Pitfall 2: "As a User" (Too Generic)
+**Symptom:** Every story starts with "As a user"
+
+**Problem:** No persona clarity. Different users have different needs.
+
+**Fix:** Use specific personas: "As a trial user," "As a paid subscriber," "As an admin," etc.
+
+### Pitfall 3: "So That" Restates "I Want To"
+**Symptom:** "I want to click the save button, so that I can save my work"
+
+**Problem:** No insight into *why* the user cares. Just restating the action.
+
+**Fix:** Dig into the motivation: "so that I don't lose my progress if the page crashes" (real outcome).
+
+### Pitfall 4: Multiple When/Then Statements
+**Symptom:** Acceptance criteria with multiple "When" statements and multiple "Then" statements
+
+**Problem:** Story is too big. Likely multiple features bundled together.
+
+**Fix:** Split the story. Each When/Then pair should be its own story (or at least evaluated for splitting).
+
+### Pitfall 5: Untestable Acceptance Criteria
+**Symptom:** "Then the user has a better experience" or "Then it's faster"
+
+**Problem:** QA can't verify success. Ambiguous definition of "done."
+
+**Fix:** Make it measurable: "Then the page loads in under 2 seconds" or "Then the user sees a success confirmation message."
+
+## Step-by-Step Workflow
+
+### Step 1: Gather Context
+
+Before writing a story, ensure you have:
+- **User persona:** Who is this for? (e.g., trial user, admin, power user)
+- **Problem understanding:** What need does this address?
+- **Desired outcome:** What does success look like?
+- **Constraints:** Technical, time, or scope limitations
+
+**If missing context:** Run discovery interviews or problem validation work first.
+
+### Step 2: Write the Use Case
+
+Fill in the template:
+
+```markdown
+### User Story [ID]:
+
+- **Summary:** [Brief, memorable title focused on value to the user]
+
+#### Use Case:
+- **As a** [user name if available, otherwise persona, otherwise role]
+- **I want to** [action user takes to get to outcome]
+- **so that** [desired outcome]
+```
+
+**Quality checks:**
+- **"As a" specificity:** Is this a specific persona (e.g., "trial user") or generic ("user")?
+- **"I want to" clarity:** Is this an action the user takes, or a feature you're building?
+- **"So that" outcome:** Does this explain the user's motivation? Or is it just restating the action?
+
+**Good examples:**
+- ✅ "As a trial user, I want to log in with Google, so that I can access the app without creating a new password"
+- ✅ "As a power user, I want to bulk delete items, so that I save time managing my workspace"
+
+**Bad examples:**
+- ❌ "As a user, I want a login button, so that I can log in" (restating the action)
+- ❌ "As a developer, I want to refactor the database" (no user value)
+
+### Step 3: Write the Acceptance Criteria
+
+Fill in the template:
+
+```markdown
+#### Acceptance Criteria:
+
+- **Scenario:** [Brief, human-readable scenario describing value]
+- **Given:** [Initial context or precondition]
+- **and Given:** [Additional context or preconditions]
+- **and Given:** [Additional context as needed]
+- **and Given:** [UI-focused context ensuring 'When' can happen]
+- **and Given:** [Outcomes-focused context ensuring 'Then' is delivered]
+- **When:** [Event that triggers the action—aligns with 'I want to']
+- **Then:** [Expected outcome—aligns with 'so that']
+```
+
+**Quality checks:**
+- **Multiple Givens are okay:** Preconditions stack up (e.g., "Given I'm logged in" + "Given I have items in my cart")
+- **Only one When:** If you need multiple "When" statements, you likely have multiple stories—split them
+- **Only one Then:** If you need multiple "Then" statements, you likely have multiple stories—split them
+- **Alignment:** Does "When" match "I want to"? Does "Then" match "so that"?
+
+### Step 4: Add a Summary
+
+Write a short, memorable summary that captures the story's value:
+
+```markdown
+- **Summary:** [Brief, human-readable title]
+```
+
+**Good examples:**
+- ✅ "Enable Google login for trial users to reduce signup friction"
+- ✅ "Bulk delete items to save time for power users"
+
+**Bad examples:**
+- ❌ "Add delete button" (feature-centric, not value-centric)
+
+### Step 5: Validate and Refine
+
+- **Read aloud to the team:** Does everyone understand who, what, why?
+- **Test acceptance criteria:** Can QA write test cases from this?
+- **Check for splitting:** If the story feels too big, consider splitting it
+- **Ensure testability:** Can you prove "Then" happened?
+
+## Complete Example
+
+```markdown
+### User Story 042:
+
+- **Summary:** Enable Google login for trial users to reduce signup friction
+
+#### Use Case:
+- **As a** trial user visiting the app for the first time
+- **I want to** log in using my Google account
+- **so that** I can access the app without creating and remembering a new password
+
+#### Acceptance Criteria:
+- **Scenario:** First-time trial user logs in via Google OAuth
+- **Given:** I am on the login page
+- **and Given:** I have a Google account
+- **When:** I click the "Sign in with Google" button and authorize the app
+- **Then:** I am logged into the app and redirected to the onboarding flow
+```
+
+## Template for Copy-Paste
+
+```markdown
+### User Story [ID]:
+
+- **Summary:** [Brief, memorable title focused on user value]
+
+#### Use Case:
+- **As a** [user name if available, otherwise persona, otherwise role]
+- **I want to** [action the user takes to get to the outcome]
+- **so that** [desired outcome for the user]
+
+#### Acceptance Criteria:
+- **Scenario:** [Brief, human-readable scenario describing value]
+- **Given:** [Initial context or precondition]
+- **and Given:** [Additional context or preconditions]
+- **and Given:** [Additional context as needed]
+- **and Given:** [UI-focused context ensuring the When can happen]
+- **and Given:** [Outcomes-focused context ensuring the Then is delivered]
+- **When:** [Event that triggers the action]
+- **Then:** [Expected outcome aligned to "so that"]
+```
+
+**Notes:**
+- Use only one **When** and one **Then**. Multiple When/Then pairs usually mean the story should be split.
+- If you need multiple outcomes, split the story.
+
+## Use Cases for This Ability
+
+- Writing user stories for a new notification system in a B2B SaaS app
+- Converting PRD requirements into properly formatted user stories with Gherkin acceptance criteria
+- Establishing story quality standards across your team
+- Backlog grooming and sprint planning
+
+Estimated time: 5–10 minutes per story
+
+## Related Concepts
+
+- **User Story Splitting:** Break large stories into smaller ones using INVEST criteria
+- **Proto-Personas:** Define the "As a [persona]" section with clarity
+- **Problem Statements:** Stories should address validated problems
+- **Epics:** Larger bodies of work that decompose into user stories
+- **INVEST Criteria:** Independent, Negotiable, Valuable, Estimable, Small, Testable
+
+## External References
+
+- Mike Cohn, *User Stories Applied* (2004) — Origin of the "As a / I want / so that" format
+- Gherkin (Cucumber) — "Given/When/Then" acceptance criteria format
+- INVEST criteria — Story quality guidelines
