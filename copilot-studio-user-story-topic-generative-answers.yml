@@ -1,0 +1,147 @@
+# Copilot Studio YAML topic draft using a Generative Answers node
+# Generated from the uploaded user-story skill and revised for a SearchAndSummarizeContent node.
+#
+# Notes:
+# - This is a best-effort starter draft for the Copilot Studio code editor.
+# - The generative answers node in YAML is represented as SearchAndSummarizeContent in Microsoft docs.
+# - After pasting this into Copilot Studio, open the generative answers node properties and verify:
+#   1) whether you want AI general knowledge enabled,
+#   2) whether Send a message should remain off,
+#   3) moderation level,
+#   4) any topic-level knowledge sources.
+# - This draft stores the generated answer in Topic.generated_story and then sends it in a message.
+
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    triggerQueries:
+      - create a user story
+      - write a user story
+      - convert requirement into user story
+      - generate acceptance criteria
+      - gherkin user story
+      - turn this requirement into a user story
+
+  actions:
+    - kind: SendActivity
+      id: intro
+      activity:
+        text:
+          - I can turn your requirement into one concise user story with Mike Cohn format and Gherkin acceptance criteria.
+
+    - kind: Question
+      id: ask_requirement
+      interruptionPolicy:
+        allowInterruption: true
+      variable: Topic.user_input
+      prompt: What requirement, feature idea, PRD excerpt, or user need should I convert?
+      entity: StringPrebuiltEntity
+
+    - kind: Question
+      id: ask_persona
+      interruptionPolicy:
+        allowInterruption: true
+      variable: Topic.persona
+      prompt: Who is the target persona? You can give a persona or say skip.
+      entity: StringPrebuiltEntity
+
+    - kind: Question
+      id: ask_constraints
+      interruptionPolicy:
+        allowInterruption: true
+      variable: Topic.constraints
+      prompt: Any constraints such as scope, timeline, or technical limitations? You can say none.
+      entity: StringPrebuiltEntity
+
+    - kind: SearchAndSummarizeContent
+      id: create_user_story
+      userInput: =Concatenate(
+        "Create exactly one user story from the following requirement. ",
+        "Use Mike Cohn format and one Gherkin scenario. ",
+        "Requirement: ", Topic.user_input, " ",
+        "Persona: ", Topic.persona, " ",
+        "Constraints: ", Topic.constraints
+      )
+      variable: Topic.generated_story
+      moderationLevel: High
+      additionalInstructions: |
+        You are a product manager assistant that creates high-quality user stories.
+
+        Follow these rules:
+        - Use Mike Cohn format:
+          - As a [persona]
+          - I want to [action]
+          - so that [outcome]
+        - Use Gherkin acceptance criteria:
+          - Scenario
+          - Given / And Given
+          - When
+          - Then
+        - Generate exactly one user story.
+        - Use a specific persona whenever possible.
+        - Ensure the "so that" expresses real user value and does not merely restate the action.
+        - Include one scenario only.
+        - Multiple Given statements are allowed.
+        - Include only one When.
+        - Include only one Then.
+        - Ensure acceptance criteria are concrete, testable, and measurable.
+        - Avoid vague phrases such as "better experience" or "faster" unless measurable.
+        - If the request is too large or includes multiple outcomes, choose the most central user value and keep the story small and coherent.
+
+        Output format:
+
+        ### User Story:
+        - Summary: <short value-focused title>
+
+        #### Use Case:
+        - As a <persona>
+        - I want to <action>
+        - so that <outcome>
+
+        #### Acceptance Criteria:
+        - Scenario: <description>
+        - Given: <context>
+        - And Given: <additional context if needed>
+        - When: <trigger>
+        - Then: <expected outcome>
+
+      # Optional file-source override example:
+      # fileSearchDataSource:
+      #   searchFilesMode:
+      #     kind: DoNotSearchFiles
+
+    - kind: ConditionGroup
+      id: has_generated_story
+      conditions:
+        - id: generated_story_present
+          condition: =!IsBlank(Topic.generated_story)
+          actions:
+            - kind: SendActivity
+              id: send_story
+              activity:
+                text:
+                  - |-
+                    Here's the user story draft:
+
+                    {Topic.generated_story}
+
+                    You can ask me to:
+                    - split this into smaller stories
+                    - refine the acceptance criteria
+                    - add edge cases
+                    - rewrite it for Jira or Azure DevOps
+
+            - kind: EndDialog
+              id: end_success
+              clearTopicQueue: true
+
+    - kind: SendActivity
+      id: send_fallback
+      activity:
+        text:
+          - I couldn't generate a user story from that input. Please try again with a requirement, persona, or clearer user outcome.
+
+inputType: {}
+outputType: {}

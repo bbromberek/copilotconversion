@@ -1,0 +1,136 @@
+# Copilot Studio YAML topic draft
+# Generated from the uploaded user-story skill blueprint.
+# Best-effort draft for the Copilot Studio code editor.
+#
+# Notes:
+# - Copilot Studio topics are represented as YAML in the code editor.
+# - Topic YAML is supported in the code editor, but Microsoft cautions that designing
+#   complex topics entirely in code isn't fully supported, so you may need to fine-tune
+#   this in the canvas after pasting it.
+# - The structure below follows the documented AdaptiveDialog / OnRecognizedIntent pattern.
+# - The AI prompt section is provided as a draft block you can wire to your preferred
+#   prompt/tool node in the studio if your tenant uses a different node schema.
+
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    triggerQueries:
+      - create a user story
+      - write a user story
+      - convert requirement into user story
+      - generate acceptance criteria
+      - gherkin user story
+      - turn this requirement into a user story
+
+  actions:
+    - kind: SendActivity
+      id: send_intro
+      activity:
+        text:
+          - "I can turn a requirement into one well-formed user story with Mike Cohn format and Gherkin acceptance criteria."
+
+    - kind: Question
+      id: question_user_input
+      interruptionPolicy:
+        allowInterruption: true
+      variable: Topic.user_input
+      prompt: "What requirement, feature idea, PRD excerpt, or user need should I turn into a user story?"
+      entity: StringPrebuiltEntity
+
+    - kind: Question
+      id: question_persona
+      interruptionPolicy:
+        allowInterruption: true
+      variable: Topic.persona
+      prompt: "Who is the target persona? You can name a persona or say skip."
+      entity: StringPrebuiltEntity
+
+    - kind: Question
+      id: question_constraints
+      interruptionPolicy:
+        allowInterruption: true
+      variable: Topic.constraints
+      prompt: "Any constraints such as scope, timeline, or technical limitations? You can say none."
+      entity: StringPrebuiltEntity
+
+    # Draft AI prompt action:
+    # Replace this section with the exact prompt/tool node your Copilot Studio environment uses.
+    # In many environments, you'll do this by inserting a prompt or generative node from the canvas,
+    # then pasting the prompt text below and mapping the output to Topic.generated_story.
+    - kind: SetVariable
+      id: set_prompt_text
+      variable: Topic.prompt_text
+      value: |-
+        You are a product manager assistant that creates high-quality user stories using:
+
+        1. Mike Cohn format:
+        - As a [persona]
+        - I want to [action]
+        - so that [outcome]
+
+        2. Gherkin acceptance criteria:
+        - Scenario
+        - Given / And Given
+        - When
+        - Then
+
+        INSTRUCTIONS:
+        - Convert the user's input into a clear, well-structured user story.
+        - Ensure the 'so that' expresses real user value and does not merely restate the action.
+        - Use a specific persona whenever possible; avoid generic 'user' unless the source material truly provides no better option.
+        - Generate exactly one user story.
+        - Include one scenario.
+        - Multiple Given statements are allowed.
+        - Include only one When.
+        - Include only one Then.
+        - Ensure acceptance criteria are concrete, testable, and measurable.
+        - Avoid vague phrases such as 'better experience' or 'faster' unless measurable.
+        - If the request is too large or includes multiple outcomes, choose the most central user value and keep the story small and coherent.
+
+        OUTPUT FORMAT:
+
+        ### User Story:
+        - Summary: <short value-focused title>
+
+        #### Use Case:
+        - As a <persona>
+        - I want to <action>
+        - so that <outcome>
+
+        #### Acceptance Criteria:
+        - Scenario: <description>
+        - Given: <context>
+        - And Given: <additional context if needed>
+        - When: <trigger>
+        - Then: <expected outcome>
+
+        USER INPUT:
+        {Topic.user_input}
+
+        OPTIONAL PERSONA:
+        {Topic.persona}
+
+        OPTIONAL CONSTRAINTS:
+        {Topic.constraints}
+
+    # Placeholder output. Replace Topic.generated_story with the output variable from your
+    # prompt/generative node after you add it in the Copilot Studio canvas.
+    - kind: SendActivity
+      id: send_draft_story
+      activity:
+        text:
+          - |-
+            Here's the user story draft:
+
+            {Topic.generated_story}
+
+            You can ask me to:
+            - split this into smaller stories
+            - refine the acceptance criteria
+            - add edge cases
+            - rewrite it for Jira or Azure DevOps
+
+inputType: {}
+outputType: {}

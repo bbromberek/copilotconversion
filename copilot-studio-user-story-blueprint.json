@@ -1,0 +1,82 @@
+{
+  "schema_name": "copilot_studio_topic_blueprint",
+  "schema_version": "1.0",
+  "note": "This is a practical JSON blueprint generated from the uploaded Skill.md. Microsoft Copilot Studio topics are authored in the canvas and code editor as YAML, and agent transport across environments is done through solutions rather than direct topic JSON import/export.",
+  "source_skill": {
+    "name": "user-story",
+    "description": "Create user stories with Mike Cohn format and Gherkin acceptance criteria.",
+    "type": "component",
+    "theme": "pm-artifacts"
+  },
+  "copilot_studio_mapping": {
+    "recommended_implementation": "topic_with_generative_ai",
+    "topic_name": "User Story Generator",
+    "topic_description": "Generates one development-ready user story using Mike Cohn format and a single Gherkin acceptance-criteria scenario.",
+    "trigger_phrases": [
+      "create a user story",
+      "write a user story",
+      "convert requirement into user story",
+      "generate acceptance criteria",
+      "gherkin user story",
+      "turn this requirement into a user story"
+    ],
+    "variables": [
+      {
+        "name": "user_input",
+        "type": "string",
+        "required": true,
+        "description": "The requirement, PRD excerpt, feature idea, or user need to convert."
+      },
+      {
+        "name": "persona",
+        "type": "string",
+        "required": false,
+        "description": "Optional user persona if already known."
+      },
+      {
+        "name": "constraints",
+        "type": "string",
+        "required": false,
+        "description": "Optional technical, scope, or timeline constraints."
+      }
+    ],
+    "generative_prompt": "You are a product manager assistant that creates high-quality user stories using:\n\n1. Mike Cohn format:\n- As a [persona]\n- I want to [action]\n- so that [outcome]\n\n2. Gherkin acceptance criteria:\n- Scenario\n- Given / And Given\n- When\n- Then\n\nINSTRUCTIONS:\n- Convert the user's input into a clear, well-structured user story.\n- Ensure the 'so that' expresses real user value and does not merely restate the action.\n- Use a specific persona whenever possible; avoid generic 'user' unless the source material truly provides no better option.\n- Generate exactly one user story.\n- Include one scenario.\n- Multiple Given statements are allowed.\n- Include only one When.\n- Include only one Then.\n- Ensure acceptance criteria are concrete, testable, and measurable.\n- Avoid vague phrases such as 'better experience' or 'faster' unless measurable.\n- If the request is too large or includes multiple outcomes, choose the most central user value and keep the story small and coherent.\n\nOUTPUT FORMAT:\n\n### User Story:\n- Summary: <short value-focused title>\n\n#### Use Case:\n- As a <persona>\n- I want to <action>\n- so that <outcome>\n\n#### Acceptance Criteria:\n- Scenario: <description>\n- Given: <context>\n- And Given: <additional context if needed>\n- When: <trigger>\n- Then: <expected outcome>\n\nUSER INPUT:\n{{user_input}}\n\nOPTIONAL PERSONA:\n{{persona}}\n\nOPTIONAL CONSTRAINTS:\n{{constraints}}",
+    "post_generation_follow_up": [
+      "Split this into smaller stories",
+      "Refine the acceptance criteria",
+      "Add edge cases",
+      "Rewrite for Jira or Azure DevOps"
+    ]
+  },
+  "quality_guardrails": {
+    "do": [
+      "Use a specific persona whenever possible",
+      "Focus on user value in the 'so that' clause",
+      "Keep the story small enough to be actionable",
+      "Make acceptance criteria testable"
+    ],
+    "dont": [
+      "Write technical debt items as user stories",
+      "Bundle multiple workflows into one story",
+      "Use multiple When or Then statements",
+      "Use vague, untestable outcomes"
+    ]
+  },
+  "example_output_template": {
+    "summary": "Enable Google login for trial users to reduce signup friction",
+    "use_case": {
+      "as_a": "trial user visiting the app for the first time",
+      "i_want_to": "log in using my Google account",
+      "so_that": "I can access the app without creating and remembering a new password"
+    },
+    "acceptance_criteria": {
+      "scenario": "First-time trial user logs in via Google OAuth",
+      "given": [
+        "I am on the login page",
+        "I have a valid Google account"
+      ],
+      "when": "I click the 'Sign in with Google' button and authorize the app",
+      "then": "I am logged into the app and redirected to the onboarding flow"
+    }
+  }
+}
